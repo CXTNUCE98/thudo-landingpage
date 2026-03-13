@@ -1,0 +1,44 @@
+{% import '@apostrophecms/pager:macros.html' as pager with context %}
+{% import 'fragments.html' as fragments with context %}
+
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+<div class="article-title-wrapper">
+  <div class="layout">
+    {% set title = data.page.title %}
+    {% if data.piece %}
+    {% set title = data.piece.title %}
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block main %}
+<section class="article-index">
+  <header class="article-intro general-content">
+    {% area data.page, 'intro' %}
+  </header>
+
+  {# Give first two excerpts a different treatment #}
+  <div class="article-excerpts article-excerpts--display-horizontal article-excerpts--display-featured">
+    {% for article in data.pieces %}
+    {% if loop.index === 1 or loop.index === 2 %}
+    {% render fragments.excerpt(article) %}
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {# Do the rest normally #}
+  <div class="article-excerpts article-excerpts--display-grid">
+    {% for article in data.pieces %}
+    {% if loop.index !== 1 and loop.index !== 2 %}
+    {% render fragments.excerpt(article) %}
+    {% endif %}
+    {% endfor %}
+  </div>
+  {{ pager.render({ page: data.currentPage, total: data.totalPages }, data.url) }}
+
+</section>
+{% endblock %}

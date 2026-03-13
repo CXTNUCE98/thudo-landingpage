@@ -1,0 +1,53 @@
+{#
+  This is an example home page template. It inherits and extends a layout template
+  that lives in the top-level views/ folder for convenience
+#}
+
+{% extends "layout.html" %}
+{% block bodyClass %}{{ super() }} home-page{% endblock %}
+
+{# Home page is full width #}
+{% block pageTitle %}
+  <h1 class="home-title">
+    <span class='chip'>{{ __t('project:homeTitle') }}</span>
+  </h1>
+{% endblock %}
+{% block subnav %}{% endblock %}
+
+{% block main %}
+  <div class="home">
+    <div class="content">
+      <div class="general-content">
+        {% area data.page, 'main' %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block afterLayout %}
+  <div class="home-logos">
+    <div class="home-logos__inner">
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_vtv.png" alt="VTV" />
+      </a>
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_tv360.png" alt="TV360" />
+      </a>
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_fpt.png" alt="FPT Play" />
+      </a>
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_vieon.png" alt="VieON" />
+      </a>
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_on.png" alt="ON" />
+      </a>
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_true-id.png" alt="trueID" />
+      </a>
+      <a href="#" class="home-logos__item">
+        <img src="/uploads/attachments/logo_viettel.png" alt="Viettel" />
+      </a>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% import 'link.html' as link %}
+{% set widget = data.widget %}
+
+<div class="widget hero-widget">
+  <div class="hero-widget__container">
+    <div class="hero-widget__new-badge-container">
+      <span class="badge-new">MỚI</span>
+      <span class="badge-text">Tối ưu hóa video, giảm kích thước và cải thiện chất lượng với Sigma Encode ????</span>
+      <span class="badge-arrow">→</span>
+    </div>
+
+    <div class="hero-widget__content">
+      {% area widget, 'content' %}
+    </div>
+
+    {% if widget.links.length %}
+    <div class="hero-widget__buttons">
+      {% for item in widget.links %}
+      {% set path = apos.helper.linkPath(item) %}
+      {% set styleClass = 'button--primary' if item.style === 'primary' else 'button--outline' %}
+      <a href="{{ path }}" class="button {{ styleClass }}" {% if item.linkTarget %}target="_blank" {% endif %}>
+        {{ item.linkText }}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="hero-widget__indicators">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="arrow">→</span>
+    </div>
+  </div>
+</div>

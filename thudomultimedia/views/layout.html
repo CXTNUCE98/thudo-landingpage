@@ -1,0 +1,297 @@
+{# Automatically extends the right outer layout and also handles AJAX situations #}
+{% extends data.outerLayout %}
+{% import 'link.html' as link %}
+{% import "locales.html" as locales %}
+
+{% set title = data.piece.title or data.page.title %}
+{% block title %}
+{{ title }} - {{ data.global.siteTitle or 'ApostropheCMS Demo'}}
+{% if not title %}
+{{ apos.log('Looks like you forgot to override the title block in a template that does not have access to an Apostrophe
+page or piece.') }}
+{% endif %}
+{% endblock %}
+
+{% block extraHead %}
+{#
+This block outputs its contents in the HTML document's
+
+<head>.
+  It is a good place to put extra
+  <script> <link> and <meta> tags.
+  #}
+      <link rel="preload" href="/apos-frontend/default/modules/asset/fonts/poppins.subset.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/apos-frontend/default/modules/asset/fonts/quicksand.subset.woff2" as="font" type="font/woff2" crossorigin>
+          <link rel="preload" href="/apos-frontend/default/modules/asset/fonts/roboto.subset.woff2" as="font" type="font/woff2" crossorigin>
+            <link rel="preload" href="/apos-frontend/default/modules/asset/fonts/roboto-italic.subset.woff2" as="font" type="font/woff2" crossorigin>
+              {% endblock %}
+
+              {% block beforeMain %}
+              {% set logoAttachment = apos.image.first(data.global._siteLogo) %}
+              {% set logoUrl = apos.attachment.url(logoAttachment, {size: 'one-third' }) %}
+
+              {% set logoAttachmentDark = apos.image.first(data.global._siteLogoDark) %}
+              {% set logoUrlDark = apos.attachment.url(logoAttachmentDark, {size: 'one-third' }) %}
+
+              <div class="hero-bg-wrapper">
+              <header class="header">
+                <div class="nav-bar">
+                  <h2>
+                    <a href="/">
+                      {% if logoAttachment %}
+                      <img
+                        id="nav-logo"
+                        src="{{ logoUrl }}"
+                        alt="{{ data.global.siteTitle }}"
+                        width="{{ apos.attachment.getWidth(logoAttachment) or '100' }}"
+                        height="{{ apos.attachment.getHeight(logoAttachment) or '36' }}"
+                        data-dark-url="{{ logoUrlDark if logoAttachmentDark }}"
+                        data-light-url="{{ logoUrl if logoAttachment }}"
+                      >
+                        {% else %}
+                        {{ data.global.siteTitle }}
+                        {% endif %}
+                    </a>
+                  </h2>
+                  <nav class="nav" role="navigation">
+                    <ul>
+                      <li>
+                        <a
+                          {% if data.page.slug === data.home.slug %}
+                        class="active"
+                        {% endif %}
+                        href="{{ data.home._url }}"
+            >{{ data.home.title }}</a>
+                    </li>
+                    {% for page in data.home._children %}
+                    {% if page.visibility === 'public' %}
+                    <li>
+                      <a
+                        {% if data.page.slug === page.slug %}
+                      class="active"
+                      {% endif %}
+                      href="{{ page._url }}"
+                >{{ page.title }}</a>
+                  </li>
+                  {% endif %}
+                  {% endfor %}
+                </ul>
+              </nav>
+              <div class="nav-bar__end">
+                {% include "locales.html" %}
+                <a href="#" class="button button--primary header__cta">Book a demo</a>
+              </div>
+              <button class="nav__mobile-button" data-mobile-trigger aria-controls="mobile-nav">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></svg>
+                <span>Menu</span>
+              </button>
+            </div>
+          </header>
+          <div class="mobile-nav" data-mobile-nav="hidden" aria-hidden="true">
+            <button class="mobile-nav__close-trigger" data-mobile-close-trigger>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              <span>Close</span>
+            </button>
+            <nav id="mobile-nav" class="mobile-nav__nav" role="navigation">
+              <ul>
+                <li>
+                  <a
+                    {% if data.page.slug === data.home.slug %}
+                  class="active"
+                  {% endif %}
+                  href="{{ data.home._url }}"
+          >{{ data.home.title }}</a>
+              </li>
+              {% for page in data.home._children %}
+              {% if page.visibility === 'public' %}
+              <li>
+                <a
+                  {% if data.page.slug === page.slug %}
+                class="active"
+                {% endif %}
+                href="{{ page._url }}"
+              >{{ page.title }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </nav>
+        <div class="mobile-nav__locales">
+          {% include "locales.html" %}
+        </div>
+      </div>
+      {% block breadcrumbs %}
+      {# Breadcrumb trail to the current page or piece. Not on the home page #}
+      {% if data.page and data.page._ancestors.length %}
+      <div class="layout">
+        <nav class="breadcrumb">
+          {% for page in data.page._ancestors %}
+          <a href="{{ page._url }}">{{ page.title }}</a>
+          {% endfor %}
+          <a {{ ('class="current-page"' if not data.piece) | safe }} href="{{ data.page._url }}">{{ data.page.title }}</a>
+        {% if data.piece %}
+        <a class="current-page" href="{{ data.piece._url }}">{{ data.piece.title }}</a>
+        {% endif %}
+      </nav>
+    </div>
+      {% endif %}
+      {% endblock %}
+      {% block pageTitle %}
+      <div class="page-title-wrapper">
+        {% set title = data.page.title %}
+        {% if data.piece %}
+        {% set title = data.piece.title %}
+        {% endif %}
+        <h1 class="page-title">{{ title }}</h1>
+      </div>
+      {% endblock %}
+      <div class="layout">
+        <main>
+          {% endblock %}
+
+          {% block main %}
+          {#
+    Usually, your page templates in the @apostrophecms/pages module will override
+          this block. It is safe to assume this is where your page-specific content
+          should go.
+  #}
+          {% endblock %}
+
+          {% block afterMain %}
+        </main>
+      </div>{# end .layout #}
+      </div>{# end .hero-bg-wrapper #}
+      {% block afterLayout %}{% endblock %}
+      <footer class="footer">
+        <div class="footer__container">
+          <!-- Top Section -->
+          <div class="footer__top">
+            <div class="footer__col">
+              <div class="footer__group">
+                <h4 class="footer__title">Sigma DRM</h4>
+                <ul>
+                  <li><a href="#">Sigma On-Premise DRM</a></li>
+                  <li><a href="#">Sigma Cloud DRM</a></li>
+                  <li><a href="#">Digma Multi DRM</a></li>
+                </ul>
+              </div>
+              <div class="footer__group">
+                <h4 class="footer__title">OTT – IPTV END-TO-END</h4>
+                <ul>
+                  <li><a href="#">Front-end</a></li>
+                  <li><a href="#">Back-end</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="footer__col">
+              <div class="footer__group">
+                <h4 class="footer__title">Sigma CDN</h4>
+                <ul>
+                  <li><a href="#">Sigma CDN Intranet</a></li>
+                  <li><a href="#">Sigma Multi CDN</a></li>
+                </ul>
+              </div>
+              <div class="footer__group">
+                <h4 class="footer__title">NEWS & INSIGHTS</h4>
+                <ul>
+                  <li><a href="#">News</a></li>
+                  <li><a href="#">P2P</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="footer__col">
+              <div class="footer__group">
+                <h4 class="footer__title">SIGMA MEDIA SOLUTIONS</h4>
+                <ul>
+                  <li><a href="#">Sigma SSAI</a></li>
+                  <li><a href="#">Sigma FAST Channel</a></li>
+                  <li><a href="#">Sigma DAI</a></li>
+                </ul>
+              </div>
+              <div class="footer__group">
+                <h4 class="footer__title">CONTACT</h4>
+                <ul>
+                  <li><a href="#">Referral Program</a></li>
+                  <li><a href="#">Book Meeting</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="footer__col footer__col--awards">
+              <div class="award-item">
+                <img src="/uploads/attachments/award_top10_finalists.png" alt="Top 10 Finalists VietSolution 2020" />
+              </div>
+              <div class="award-item">
+                <img src="/uploads/attachments/award_digital_conversion_solution.png" alt="Digital Conversion Solution Vietnam Digital Awards 2020" />
+              </div>
+              <div class="award-item">
+                <img src="/uploads/attachments/award_top10_finalists.png" alt="Top 10 Finalists VietSolution 2020" />
+              </div>
+            </div>
+          </div>
+
+          <div class="footer__divider"></div>
+
+          <!-- Middle Section -->
+          <div class="footer__middle">
+            <div class="footer__col footer__col--address">
+              <h4 class="footer__sub-title">Trụ sở chính</h4>
+              <p>10th floor, No 48 Le Van Luong<br />Diamond Flower Tower, Nhan Chinh Ward, Thanh Xuan Dist,<br />Hanoi, Vietnam</p>
+              <p>Tel: (+84) 4 3668 7038</p>
+              <p>Email: thudojsc@gviet.vn</p>
+              <div class="footer__badge">
+                <img src="/uploads/attachments/footer_img.png" alt="Đã thông báo bộ công thương" />
+              </div>
+            </div>
+            <div class="footer__col footer__col--address">
+              <h4 class="footer__sub-title">VP Ấn Độ</h4>
+              <p>10th floor, No 48 Le Van Luong<br />Diamond Flower Tower, Nhan Chinh Ward, Thanh Xuan Dist,<br />Hanoi, Vietnam</p>
+              <p>Tel: (+84) 4 3668 7038</p>
+              <p>Email: thudojsc@gviet.vn</p>
+            </div>
+            <div class="footer__col footer__col--newsletter">
+              <form class="newsletter-form">
+                <input type="email" placeholder="Email của bạn" aria-label="Email của bạn" />
+                <button type="submit">Gửi</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="footer__bottom">
+            <div class="footer__links">
+              <a href="#">Chính sách sử dụng</a>
+              <span class="divider">|</span>
+              <a href="#">Chính sách quyền riêng tư</a>
+            </div>
+            <div class="footer__copyright">
+              &copy; 2024 Sigma. All Rights Reserved
+            </div>
+          </div>
+        </div>
+      </footer>
+      {% endblock %}
+
+      {% block extraBody %}
+      {# Light/Dark mode switch #}
+      <div class="mode-switch" data-mode-switch>
+        <label for="light-dark-toggle">
+          <span class="sr-only">Toggle dark mode</span>
+          <input
+            class="toggle-checkbox"
+            type="checkbox"
+            name="light-dark-toggle"
+            id="light-dark-toggle"
+            role="switch"
+            aria-label="Toggle dark mode"
+          >
+            <div class="toggle-slot">
+              <div class="sun-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" class="iconify sun-icon" data-icon="feather-sun" data-inline="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></g></svg>
+              </div>
+              <div class="toggle-button"></div>
+              <div class="moon-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" class="iconify moon-icon" data-icon="feather-moon" data-inline="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79"></path></svg>
+              </div>
+            </div>
+        </label>
+      </div>
+      {% endblock %}
