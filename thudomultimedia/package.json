@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node app",
     "dev": "cross-env APOS_DEV=1 nodemon --delay 1000ms -x \"nodemon app.js\"",
+    "build": "node app @apostrophecms/asset:build",
     "staging-deploy": "echo \"ℹ️  Clearing module links and installed modules to deploy.\" && rm package-lock.json && rm -r node_modules && npm i && sc-deploy staging",
     "analyze-bundle": "APOS_BUNDLE_ANALYZER=1 node app @apostrophecms/asset:build"
   },
@@ -20,12 +21,12 @@
     }
   },
   "dependencies": {
-    "@apostrophecms/favicon": "^1.1.3",
-    "@apostrophecms/import-export": "^2.4.1",
-    "@apostrophecms/open-graph": "^1.2.3",
-    "@apostrophecms/seo": "^1.2.3",
-    "@apostrophecms/vite": "^1.1.0",
-    "apostrophe": "^4.24.1",
+    "@apostrophecms/favicon": "workspace:*",
+    "@apostrophecms/import-export": "workspace:*",
+    "@apostrophecms/open-graph": "workspace:*",
+    "@apostrophecms/seo": "workspace:*",
+    "@apostrophecms/vite": "workspace:*",
+    "apostrophe": "workspace:*",
     "klona": "^2.0.6"
   },
   "author": "Apostrophe Technologies, Inc",
