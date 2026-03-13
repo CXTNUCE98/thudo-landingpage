@@ -16,7 +16,11 @@
   "engines": {
     "node": ">=18"
   },
+  "packageManager": "pnpm@10.18.0",
   "pnpm": {
+    "overrides": {
+      "fast-xml-parser": "5.4.0"
+    },
     "onlyBuiltDependencies": [
       "sharp",
       "vue-demi",
@@ -27,6 +31,5 @@
     "ignoredBuiltDependencies": [
       "protobufjs"
     ]
-  },
-  "packageManager": "pnpm@10.18.0"
+  }
 }

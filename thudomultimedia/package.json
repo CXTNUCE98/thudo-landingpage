@@ -15,11 +15,6 @@
     "type": "git",
     "url": ""
   },
-  "pnpm": {
-    "overrides": {
-      "fast-xml-parser": "5.4.0"
-    }
-  },
   "dependencies": {
     "@apostrophecms/favicon": "workspace:*",
     "@apostrophecms/import-export": "workspace:*",
